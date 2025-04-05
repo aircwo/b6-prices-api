@@ -12,9 +12,8 @@
     "eslint": "eslint . --config config/eslint.config.mjs",
     "eslint:fix": "eslint . --fix --config config/eslint.config.mjs",
     "typeorm": "typeorm-ts-node-commonjs",
-    "migration:generate": "npm run typeorm migration:generate -- -d src/config/dataSource.ts",
-    "migration:run": "npm run typeorm migration:run -- -d src/config/dataSource.ts",
-    "migration:revert": "npm run typeorm migration:revert -- -d src/config/dataSource.ts"
+    "migration:run": "npm run typeorm migration:run -- -d src/core/config/database.ts",
+    "migration:revert": "npm run typeorm migration:revert -- -d src/core/config/database.ts"
   },
   "engines": {
     "node": ">=22.0.0"
