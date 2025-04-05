@@ -32,7 +32,11 @@ Start the Postgres docker container:
 docker-compose up -d
 ```
 
-todo: database seed - npm run migration:run
+Load the database migrations into the postgres database:
+
+```bash
+npm run migration:run
+```
 
 Build and run the application:
 
@@ -54,6 +58,11 @@ Linting and code formatting:
 npm run eslint
 ```
 
+Revert database changes:
+
+```bash
+npm run migration:revert
+```
 
 ## License
 
