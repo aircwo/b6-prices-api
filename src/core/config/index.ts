@@ -5,9 +5,18 @@ import { DEFAULT_ENVIRONMENT } from "../utils/constants";
 
 dotenv.config();
 
+interface DatabaseConfig {
+  host: string;
+  port: number;
+  username: string;
+  password: string;
+  name: string;
+}
+
 interface Config {
   port: number;
   nodeEnv: string;
+  database: DatabaseConfig;
   logger: pino.Logger;
   apiKey?: string;
 }
@@ -36,6 +45,15 @@ export const config: Config = {
     ? 3000
     : parseInt(process.env.PORT!, 10),
   nodeEnv: process.env.NODE_ENV || DEFAULT_ENVIRONMENT,
+  database: {
+    host: process.env.DB_HOST || "localhost",
+    port: isNaN(parseInt(process.env.DB_PORT!, 10))
+      ? 5432
+      : parseInt(process.env.DB_PORT!, 10),
+    username: process.env.DB_USERNAME || "postgres",
+    password: process.env.DB_PASSWORD || "postgres",
+    name: process.env.DB_NAME || "b6-prices-api-db",
+  },
   logger: pino({
     ...loggerConfig,
     level: getLogLevel(),

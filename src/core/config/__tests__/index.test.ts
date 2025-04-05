@@ -80,6 +80,11 @@ describe("config", () => {
       // given
       delete process.env.PORT;
       delete process.env.NODE_ENV;
+      delete process.env.DB_HOST;
+      delete process.env.DB_PORT;
+      delete process.env.DB_USERNAME;
+      delete process.env.DB_PASSWORD;
+      delete process.env.DB_NAME;
       delete process.env.LOG_LEVEL;
       delete process.env.API_KEY;
 
@@ -91,6 +96,13 @@ describe("config", () => {
       expect(freshConfig.port).toBe(3000);
       expect(freshConfig.nodeEnv).toBe(DEFAULT_ENVIRONMENT);
       expect(freshConfig.apiKey).toBeUndefined();
+      expect(freshConfig.database).toEqual({
+        host: "localhost",
+        port: 5432,
+        username: "postgres",
+        password: "postgres",
+        name: "b6-prices-api-db",
+      });
       expect(freshConfig.logger).toBeDefined();
       expect(freshConfig.logger).toEqual(
         expect.objectContaining({
@@ -107,6 +119,11 @@ describe("config", () => {
       // given
       process.env.PORT = "4000";
       process.env.NODE_ENV = "production";
+      process.env.DB_HOST = "test-host";
+      process.env.DB_PORT = "1234";
+      process.env.DB_USERNAME = "test-user";
+      process.env.DB_PASSWORD = "test-password";
+      process.env.DB_NAME = "test-db";
       process.env.LOG_LEVEL = "warn";
       process.env.API_KEY = "test-api-key";
 
@@ -118,6 +135,13 @@ describe("config", () => {
       expect(freshConfig.port).toBe(4000);
       expect(freshConfig.nodeEnv).toBe("production");
       expect(freshConfig.apiKey).toBe("test-api-key");
+      expect(freshConfig.database).toEqual({
+        host: "test-host",
+        port: 1234,
+        username: "test-user",
+        password: "test-password",
+        name: "test-db",
+      });
       expect(freshConfig.logger).toEqual(
         expect.objectContaining({
           info: expect.any(Function),
@@ -132,12 +156,14 @@ describe("config", () => {
     test("should handle invalid numeric environment variables", async () => {
       // given
       process.env.PORT = "not-a-number";
+      process.env.DB_PORT = "invalid";
 
       jest.resetModules();
       const { config: freshConfig } = await import("../index");
 
       // when / then
       expect(freshConfig.port).toBe(3000);
+      expect(freshConfig.database.port).toBe(5432);
     });
   });
 });
