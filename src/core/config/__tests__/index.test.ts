@@ -81,6 +81,7 @@ describe("config", () => {
       delete process.env.PORT;
       delete process.env.NODE_ENV;
       delete process.env.LOG_LEVEL;
+      delete process.env.API_KEY;
 
       // Re-import to get a fresh config
       jest.resetModules();
@@ -89,6 +90,7 @@ describe("config", () => {
       // when / then
       expect(freshConfig.port).toBe(3000);
       expect(freshConfig.nodeEnv).toBe(DEFAULT_ENVIRONMENT);
+      expect(freshConfig.apiKey).toBeUndefined();
       expect(freshConfig.logger).toBeDefined();
       expect(freshConfig.logger).toEqual(
         expect.objectContaining({
@@ -106,6 +108,7 @@ describe("config", () => {
       process.env.PORT = "4000";
       process.env.NODE_ENV = "production";
       process.env.LOG_LEVEL = "warn";
+      process.env.API_KEY = "test-api-key";
 
       // when Re-import to get a fresh config with new env vars
       jest.resetModules();
@@ -114,6 +117,7 @@ describe("config", () => {
       // then
       expect(freshConfig.port).toBe(4000);
       expect(freshConfig.nodeEnv).toBe("production");
+      expect(freshConfig.apiKey).toBe("test-api-key");
       expect(freshConfig.logger).toEqual(
         expect.objectContaining({
           info: expect.any(Function),
@@ -129,11 +133,10 @@ describe("config", () => {
       // given
       process.env.PORT = "not-a-number";
 
-      // when
       jest.resetModules();
       const { config: freshConfig } = await import("../index");
 
-      // then
+      // when / then
       expect(freshConfig.port).toBe(3000);
     });
   });

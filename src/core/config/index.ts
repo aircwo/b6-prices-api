@@ -9,6 +9,7 @@ interface Config {
   port: number;
   nodeEnv: string;
   logger: pino.Logger;
+  apiKey?: string;
 }
 
 export const loggerConfig = {
@@ -40,4 +41,5 @@ export const config: Config = {
     level: getLogLevel(),
     timestamp: pino.stdTimeFunctions.isoTime,
   }),
+  apiKey: process.env.API_KEY || undefined,
 };
