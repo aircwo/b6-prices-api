@@ -17,6 +17,18 @@ jest.mock("./config", () => ({
   },
 }));
 
+jest.mock("./config/database", () => {
+  const mockDataSource = {
+    initialize: jest.fn().mockResolvedValue(undefined),
+  };
+
+  return {
+    dataSource: mockDataSource,
+    initializeDataSource: jest.fn().mockResolvedValue(undefined),
+  };
+});
+
+// Mock the Fastify app
 jest.mock("../app");
 
 describe("initServer", () => {
@@ -63,6 +75,24 @@ describe("initServer", () => {
     expect(process.exit).not.toHaveBeenCalled();
   });
 
+  it("should handle database initialisation error", async () => {
+    // given
+    const dbError = new Error("Database connection failed");
+    (initializeDataSource as jest.Mock).mockRejectedValueOnce(dbError);
+
+    // when
+    await initServer();
+
+    // then
+    expect(initializeDataSource).toHaveBeenCalledTimes(1);
+    expect(appModule.default).not.toHaveBeenCalled();
+    expect(config.logger.error).toHaveBeenCalledWith(
+      "Error initialising server:",
+      dbError,
+    );
+    expect(process.exit).toHaveBeenCalledWith(1);
+  });
+
   it("should handle server listening error", async () => {
     // given
     const listenError = new Error("Port already in use");
@@ -72,6 +102,7 @@ describe("initServer", () => {
     await initServer();
 
     // then
+    expect(initializeDataSource).toHaveBeenCalledTimes(1);
     expect(mockDefaultExportFn).toHaveBeenCalledTimes(1);
     expect(mockListen).toHaveBeenCalledWith({
       port: config.port,
