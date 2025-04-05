@@ -6,7 +6,11 @@
     "clean": "node -e \"if (require('fs').existsSync('dist')) require('fs').rmSync('dist', { recursive: true, force: true })\"",
     "prebuild": "npm run clean",
     "build": "ncc build src/index.ts -m --license ./license.txt -a",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "jest --config config/jest.config.ts",
+    "test:coverage": "jest --config config/jest.config.ts --coverage",
+    "eslint": "eslint . --config config/eslint.config.mjs",
+    "eslint:fix": "eslint . --fix --config config/eslint.config.mjs"
   },
   "engines": {
     "node": ">=22.0.0"
@@ -15,8 +19,14 @@
   "author": "aircwo",
   "license": "BSL-1.0",
   "description": "A Node API for tracking product prices through price alerts.",
-  "dependencies": {},
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "eslint-plugin-prettier": "^5.2.6"
+  },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@typescript-eslint/eslint-plugin": "^8.29.0",
+    "@typescript-eslint/parser": "^8.29.0",
     "@vercel/ncc": "^0.38.3",
     "eslint": "^9.23.0",
     "ts-jest": "^29.3.1",
