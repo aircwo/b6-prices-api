@@ -1,0 +1,39 @@
+  [
+    {
+      "id": "p1",
+      "url": "https://example.com/products/smartphone-x",
+      "name": "Smartphone X",
+      "priceHistory": [
+        { "date": "2023-01-01", "price": 999.99 },
+        { "date": "2023-01-05", "price": 949.99 },
+        { "date": "2023-01-10", "price": 899.99 },
+        { "date": "2023-01-15", "price": 849.99 },
+        { "date": "2023-01-20", "price": 799.99 }
+      ],
+      "currentPrice": 799.99
+    },
+    {
+      "id": "p2",
+      "url": "https://example.com/products/laptop-pro",
+      "name": "Laptop Pro",
+      "priceHistory": [
+        { "date": "2023-01-01", "price": 1499.99 },
+        { "date": "2023-01-07", "price": 1449.99 },
+        { "date": "2023-01-14", "price": 1399.99 },
+        { "date": "2023-01-21", "price": 1349.99 }
+      ],
+      "currentPrice": 1349.99
+    },
+    {
+      "id": "p3",
+      "url": "https://example.com/products/smart-watch",
+      "name": "Smart Watch",
+      "priceHistory": [
+        { "date": "2023-01-01", "price": 299.99 },
+        { "date": "2023-01-08", "price": 279.99 },
+        { "date": "2023-01-15", "price": 259.99 },
+        { "date": "2023-01-22", "price": 229.99 }
+      ],
+      "currentPrice": 229.99
+    }
+  ]
