@@ -1,15 +1,60 @@
 # b6-prices-api
 
+A Node API for tracking product prices through price alerts.
+
+## Prerequisites
+
+- Docker
+- Node 22
+  - To set to the project version, use the command: `nvm use`
+  - Else manually change to a node version `>=v22.0.0`
+
 ## Running Locally
 
+Clone the repo:
+<todo>
 
-nvm use
+Navigate to the project source:
+
+```bash
+cd b6-prices-api
+```
+
+Install project dependencies:
+
+```bash
 npm i
-npm test
-npm eslint
+```
 
+Start the Postgres docker container:
+
+```bash
 docker-compose up -d
+```
 
-npm run migration:run
+todo: database seed - npm run migration:run
 
-npm run start
+Build and run the application:
+
+```bash
+npm run build && npm run start
+```
+
+## Testing and other scripts
+
+Test with coverage:
+
+```bash
+npm run test:coverage
+```
+
+Linting and code formatting:
+
+```bash
+npm run eslint
+```
+
+
+## License
+
+Code is published to an open sourced repository under the BSL-1.0 license.
