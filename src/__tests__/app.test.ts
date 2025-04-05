@@ -5,14 +5,23 @@ import helmet from "@fastify/helmet";
 jest.mock("fastify");
 jest.mock("@fastify/cors");
 jest.mock("@fastify/helmet");
+jest.mock("../feature/alert/routes/alert.routes");
+jest.mock("../feature/alert/service/priceCheck.service");
 jest.mock("../core/config", () => ({
   config: {
     nodeEnv: "test",
+    database: {
+      host: "localhost",
+      port: 5432,
+      username: "test",
+      password: "test",
+      database: "test_db",
+    },
   },
   getLogLevel: jest.fn().mockReturnValue("silent"),
 }));
 
-describe("app init", () => {
+describe("App Initialization", () => {
   let mockApp: any;
   let buildApp: any;
 
@@ -29,12 +38,21 @@ describe("app init", () => {
       decorate: jest.fn().mockReturnThis(),
     };
 
+
     (Fastify as unknown as jest.Mock).mockReturnValue(mockApp);
 
     // Dynamically import the app to ensure our mocks are set up first
     jest.isolateModules(async () => {
       buildApp = (await import("../app")).default;
     });
+  });
+
+  it("should return the app instance", () => {
+    // given / when
+    const result = buildApp();
+
+    // then
+    expect(result).toBe(mockApp);
   });
 
   it("should create a Fastify instance with logger configuration", () => {
@@ -66,26 +84,56 @@ describe("app init", () => {
 
     // then
     expect(mockApp.get).toHaveBeenCalledWith(
-      "/health",
+      "/prices-api/v1/health",
       expect.any(Function),
     );
+  });
+
+  it("should set up error handlers", () => {
+    // given / when
+    buildApp();
+
+    // then
+    expect(mockApp.setNotFoundHandler).toHaveBeenCalledWith(
+      expect.any(Function),
+    );
+    expect(mockApp.setErrorHandler).toHaveBeenCalledWith(expect.any(Function));
   });
 
   it("should return correct response from health check endpoint", async () => {
     // given
     buildApp();
     const healthCheckHandlerCall = mockApp.get.mock.calls.find(
-      (call: any) => call[0] === "/health",
+      (call: any) => call[0] === "/prices-api/v1/health",
     );
     const healthCheckHandler = healthCheckHandlerCall[1];
 
-    // When
+    // when
     const response = await healthCheckHandler();
 
-    // Then
+    // then
     expect(response).toEqual({
       status: "OK",
       message: "API is up and running",
     });
+  });
+
+  it("should handle 404 errors correctly", () => {
+    // given
+    buildApp();
+
+    const notFoundHandler = mockApp.setNotFoundHandler.mock.calls[0][0];
+    const request = {};
+    const reply = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+    };
+
+    // when
+    notFoundHandler(request, reply);
+
+    // then
+    expect(reply.status).toHaveBeenCalledWith(404);
+    expect(reply.send).toHaveBeenCalledWith({ message: "Resource not found" });
   });
 });
