@@ -1,0 +1,9 @@
+# project specific 
+dist/
+node_modules/
+/coverage/
+.env
+.env.local
+
+# macOS
+.DS_Store

@@ -1,0 +1,26 @@
+{
+  "name": "b6-prices",
+  "version": "1.0.0",
+  "main": "dist/index.ts",
+  "scripts": {
+    "clean": "node -e \"if (require('fs').existsSync('dist')) require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "prebuild": "npm run clean",
+    "build": "ncc build src/index.ts -m --license ./license.txt -a",
+    "start": "node dist/index.js"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "keywords": [],
+  "author": "aircwo",
+  "license": "BSL-1.0",
+  "description": "A Node API for tracking product prices through price alerts.",
+  "dependencies": {},
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.3",
+    "eslint": "^9.23.0",
+    "ts-jest": "^29.3.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  }
+}
