@@ -2,12 +2,18 @@
 
 A Node API for tracking product prices through price alerts.
 
+Sample requests and responses can be found at the publicly available postman collection at the following link:
+<https://www.postman.com/arcwo/bs-prices-api/collection/g0o8zf7/b6-prices-api?action=share&creator=28292021>
+
+If running locally, this collection can be downloaded into your local Postman app.
+
 ## Prerequisites
 
 - Docker
 - Node 22
   - To set to the project version, use the command: `nvm use`
   - Else manually change to a node version `>=v22.0.0`
+- Postman (optional)
 
 ## Running Locally
 
@@ -28,6 +34,8 @@ Install project dependencies:
 ```bash
 npm i
 ```
+
+Next, copy the `.env.example` file to `.env` and set a `x-api-key` at minimum. This should be sent as a header for alert specific routes.
 
 Start the Postgres docker container:
 
