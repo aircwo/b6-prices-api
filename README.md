@@ -7,6 +7,8 @@ Sample requests and responses can be found at the publicly available postman col
 
 If running locally, this collection can be downloaded into your local Postman app.
 
+*Note: a `TEST` frequency is available, this will run every two minutes.*
+
 ## Prerequisites
 
 - Docker
