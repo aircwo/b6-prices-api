@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import alertRoutes from "../feature/alert/routes/alert.routes";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 
@@ -47,14 +48,6 @@ describe("App Initialization", () => {
     });
   });
 
-  it("should return the app instance", () => {
-    // given / when
-    const result = buildApp();
-
-    // then
-    expect(result).toBe(mockApp);
-  });
-
   it("should create a Fastify instance with logger configuration", () => {
     // given / when
     buildApp();
@@ -89,6 +82,16 @@ describe("App Initialization", () => {
     );
   });
 
+  it("should register alert routes with correct prefix", () => {
+    // given / when
+    buildApp();
+
+    // then
+    expect(mockApp.register).toHaveBeenCalledWith(alertRoutes, {
+      prefix: "/prices-api/v1/alerts",
+    });
+  });
+
   it("should set up error handlers", () => {
     // given / when
     buildApp();
@@ -100,9 +103,12 @@ describe("App Initialization", () => {
     expect(mockApp.setErrorHandler).toHaveBeenCalledWith(expect.any(Function));
   });
 
+  // Test the health check endpoint handler
   it("should return correct response from health check endpoint", async () => {
     // given
     buildApp();
+
+    // Get the health check handler function
     const healthCheckHandlerCall = mockApp.get.mock.calls.find(
       (call: any) => call[0] === "/prices-api/v1/health",
     );

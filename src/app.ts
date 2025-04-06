@@ -2,6 +2,7 @@ import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import { config, getLogLevel, loggerConfig } from "./core/config";
 import Fastify, { FastifyInstance } from "fastify";
+import alertRoutes from "./feature/alert/routes/alert.routes";
 import { DEFAULT_ENVIRONMENT } from "./core/utils/constants";
 
 const BASE_URL_V1 = "/prices-api/v1";
@@ -21,6 +22,8 @@ const buildApp = (): FastifyInstance => {
   app.get(BASE_URL_V1 + "/health", async () => {
     return { status: "OK", message: "API is up and running" };
   });
+
+  app.register(alertRoutes, { prefix: BASE_URL_V1 + "/alerts" });
   
   app.setNotFoundHandler((_request, reply) => {
     reply.status(404).send({ message: "Resource not found" });
