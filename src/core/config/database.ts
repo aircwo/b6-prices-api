@@ -14,7 +14,12 @@ export const dataSource = new DataSource({
   synchronize: config.nodeEnv === DEFAULT_ENVIRONMENT,
   logging: config.nodeEnv === DEFAULT_ENVIRONMENT,
   entities: [Alert],
-  migrations: [join(__dirname, "../../infrastructure/database/migrations/createAlertTable.ts")],
+  migrations: [
+    join(
+      __dirname,
+      "../../infrastructure/database/migrations/createAlertTable.ts",
+    ),
+  ],
 });
 
 export const initializeDataSource = async () => {
