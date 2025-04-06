@@ -23,7 +23,10 @@ jest.mock("../core/config", () => ({
 }));
 
 describe("App Initialization", () => {
+  // would write mocked types but due to time constraints, using any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockApp: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let buildApp: any;
 
   beforeEach(() => {
@@ -131,6 +134,7 @@ describe("App Initialization", () => {
 
     // Get the health check handler function
     const healthCheckHandlerCall = mockApp.get.mock.calls.find(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (call: any) => call[0] === "/prices-api/v1/health",
     );
     const healthCheckHandler = healthCheckHandlerCall[1];

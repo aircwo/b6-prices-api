@@ -4,7 +4,10 @@ import { CheckFrequency } from "../../model/enum/checkFrequency.enum";
 import { AlertRepository } from "../../repository/alert.repository";
 import { alertService } from "../alert.service";
 import { PriceCheckService } from "../priceCheck.service";
-import { ALERT_DESIRED_PRICE, ALERT_PRODUCT_URL } from "../../../../../test-setup/testConstants";
+import {
+  ALERT_DESIRED_PRICE,
+  ALERT_PRODUCT_URL,
+} from "../../../../../test-setup/testConstants";
 
 jest.mock("../../repository/alert.repository", () => ({
   AlertRepository: {
@@ -93,7 +96,9 @@ describe("PriceCheckService", () => {
   describe("cleanup", () => {
     it("should clear all scheduled checks", () => {
       // given
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (service as any).checkIntervals.set("1", 100);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (service as any).checkIntervals.set("2", 200);
 
       // when
@@ -103,6 +108,7 @@ describe("PriceCheckService", () => {
       expect(clearTimeout).toHaveBeenCalledTimes(2);
       expect(clearTimeout).toHaveBeenCalledWith(100);
       expect(clearTimeout).toHaveBeenCalledWith(200);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect((service as any).checkIntervals.size).toBe(0);
       expect(mockFastify.log.info).toHaveBeenCalledWith(
         "Price checking service stopped",
@@ -124,13 +130,14 @@ describe("PriceCheckService", () => {
       ).calculateNextCheckDelay = jest.fn().mockReturnValue(60000); // 1 minute
 
       // when
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (service as any).scheduleCheck(alert);
 
       // then
       expect(setTimeout).toHaveBeenCalled();
       expect(mockFastify.log.debug).toHaveBeenCalled();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect((service as any).checkIntervals.has(alert.id)).toBe(true);
-      // restore
       (
         await import("../../../../core/utils/calculateNextCheckDelay")
       ).calculateNextCheckDelay = originalCalcFn;
@@ -146,7 +153,9 @@ describe("PriceCheckService", () => {
       (alertService.checkPriceCondition as jest.Mock).mockResolvedValue(false);
 
       // Mock the schedule function to avoid infinite recursion
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const originalScheduleFn = (service as any).scheduleCheck;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (service as any).scheduleCheck = jest.fn();
 
       // when
@@ -172,6 +181,7 @@ describe("PriceCheckService", () => {
       (alertService.checkPriceCondition as jest.Mock).mockResolvedValue(false);
 
       // when
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (service as any).checkPrice(alert);
 
       // then
@@ -187,12 +197,15 @@ describe("PriceCheckService", () => {
       (alertService.checkPriceCondition as jest.Mock).mockResolvedValue(true);
 
       // Mock sendNotification
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (service as any).sendNotification = jest.fn();
 
       // when
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (service as any).checkPrice(alert);
 
       // then
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect((service as any).sendNotification).toHaveBeenCalledWith(alert);
     });
 
@@ -203,6 +216,7 @@ describe("PriceCheckService", () => {
       (AlertRepository.save as jest.Mock).mockRejectedValue(testError);
 
       // when
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (service as any).checkPrice(alert);
 
       // then
@@ -220,6 +234,7 @@ describe("PriceCheckService", () => {
       (AlertRepository.save as jest.Mock).mockResolvedValue(alert);
 
       // when
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (service as any).sendNotification(alert);
 
       // then
