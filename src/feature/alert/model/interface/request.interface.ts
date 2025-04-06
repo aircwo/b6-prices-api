@@ -5,19 +5,17 @@ type BaseRequestParams = {
   id: string;
 };
 
-type BaseRequestBody = {
-  productUrl?: string;
-  desiredPrice?: number;
-  checkFrequency?: CheckFrequency;
-};
-
 export interface CreateAlertRequest {
   Body: CreateAlertDTO;
 }
 
 export interface UpdateAlertRequest {
   Params: BaseRequestParams;
-  Body: BaseRequestBody;
+  Body: {
+    productUrl?: string;
+    desiredPrice?: number;
+    checkFrequency?: CheckFrequency;
+  };
 }
 
 export interface AlertParamsRequest {
