@@ -12,7 +12,10 @@ A Node API for tracking product prices through price alerts.
 ## Running Locally
 
 Clone the repo:
-<todo>
+
+```bash
+git clone https://github.com/aircwo/b6-prices-api.git
+```
 
 Navigate to the project source:
 
