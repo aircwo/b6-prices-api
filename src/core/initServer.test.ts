@@ -18,8 +18,12 @@ jest.mock("./config", () => ({
 }));
 
 jest.mock("./config/database", () => {
+  const mockRepository = {
+    save: jest.fn(),
+  };
   const mockDataSource = {
     initialize: jest.fn().mockResolvedValue(undefined),
+    getRepository: jest.fn().mockReturnValue(mockRepository),
   };
 
   return {
