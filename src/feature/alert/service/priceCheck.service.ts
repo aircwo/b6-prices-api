@@ -1,7 +1,9 @@
+import { alertService } from "./alert.service";
 import { Alert } from "../model/entity/alert.entity";
 import { dataSource } from "../../../core/config/database";
 import { AlertRepository } from "../repository/alert.repository";
 import { FastifyInstance } from "fastify";
+import { calculateNextCheckDelay } from "../../../core/utils/calculateNextCheckDelay";
 
 export class PriceCheckService {
   private fastify: FastifyInstance;
@@ -62,7 +64,78 @@ export class PriceCheckService {
    * Schedule a price check for an alert
    */
   private scheduleCheck(alert: Alert) {
-    // todo
+    // Calculate when to run the check based on frequency
+    const delay = calculateNextCheckDelay(alert.checkFrequency);
+
+    this.fastify.log.debug(
+      { alertId: alert.id, delay: delay },
+      `Scheduling price check in ${delay / (1000 * 60)} minutes (${alert.checkFrequency})`,
+    );
+
+    // Schedule the check
+    const timeout = setTimeout(async () => {
+      await this.checkPrice(alert);
+
+      // If alert is still active, schedule the next check
+      const updatedAlert = await alertService.getAlertById(alert.id);
+      if (updatedAlert && updatedAlert.isActive) {
+        this.scheduleCheck(updatedAlert);
+      }
+    }, delay);
+
+    // Store the timeout for cleanup
+    this.checkIntervals.set(alert.id, timeout);
+  }
+
+  /**
+   * Check if the price condition is met
+   */
+  private async checkPrice(alert: Alert) {
+    try {
+      this.fastify.log.debug({ alertId: alert.id }, "Checking price");
+
+      // Update last checked timestamp
+      alert.lastCheckedAt = new Date();
+      await AlertRepository.save(alert);
+
+      // Check if price condition is met
+      const isPriceConditionMet = await alertService.checkPriceCondition(alert);
+
+      if (isPriceConditionMet) {
+        await this.sendNotification(alert);
+      }
+    } catch (error) {
+      this.fastify.log.error(
+        { alertId: alert.id, error },
+        "Error checking price",
+      );
+    }
+  }
+
+  /**
+   * Send notification when price condition is met
+   */
+  private async sendNotification(alert: Alert) {
+    this.fastify.log.info(
+      { alertId: alert.id },
+      "Price condition met, sending notification",
+    );
+
+    // Update last notified timestamp
+    alert.lastNotifiedAt = new Date();
+    await AlertRepository.save(alert);
+
+    // In a real application, you would implement actual notification logic here
+    // This could be sending an email, push notification, etc.
+
+    // For simulation purposes, we'll just log the notification
+    this.fastify.log.info({
+      type: "PRICE_ALERT",
+      alertId: alert.id,
+      productUrl: alert.productUrl,
+      desiredPrice: alert.desiredPrice,
+      message: `The price for the product at ${alert.productUrl} has met or dropped below your desired price of ${alert.desiredPrice}.`,
+    });
   }
 
   /**
