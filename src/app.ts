@@ -3,6 +3,7 @@ import helmet from "@fastify/helmet";
 import { config, getLogLevel, loggerConfig } from "./core/config";
 import Fastify, { FastifyInstance } from "fastify";
 import alertRoutes from "./feature/alert/routes/alert.routes";
+import { PriceCheckService } from "./feature/alert/service/priceCheck.service";
 import { DEFAULT_ENVIRONMENT } from "./core/utils/constants";
 
 const BASE_URL_V1 = "/prices-api/v1";
@@ -24,7 +25,7 @@ const buildApp = (): FastifyInstance => {
   });
 
   app.register(alertRoutes, { prefix: BASE_URL_V1 + "/alerts" });
-  
+
   app.setNotFoundHandler((_request, reply) => {
     reply.status(404).send({ message: "Resource not found" });
   });
@@ -38,6 +39,23 @@ const buildApp = (): FastifyInstance => {
       message: error.message || "Internal Server Error",
       stack: config.nodeEnv === DEFAULT_ENVIRONMENT ? error.stack : undefined,
     });
+  });
+
+  // Init price checking service after the server starts
+  app.addHook("onReady", async () => {
+    const priceCheckService = new PriceCheckService(app);
+    await priceCheckService.initialize();
+
+    // Store the service instance for cleanup on shutdown
+    app.decorate("priceCheckService", priceCheckService);
+  });
+
+  // Cleanup on server close
+  app.addHook("onClose", (instance, done) => {
+    if (instance.priceCheckService) {
+      instance.priceCheckService.cleanup();
+    }
+    done();
   });
 
   return app;

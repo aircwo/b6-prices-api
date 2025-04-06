@@ -39,7 +39,6 @@ describe("App Initialization", () => {
       decorate: jest.fn().mockReturnThis(),
     };
 
-
     (Fastify as unknown as jest.Mock).mockReturnValue(mockApp);
 
     // Dynamically import the app to ensure our mocks are set up first
@@ -101,6 +100,28 @@ describe("App Initialization", () => {
       expect.any(Function),
     );
     expect(mockApp.setErrorHandler).toHaveBeenCalledWith(expect.any(Function));
+  });
+
+  it("should set up onReady hook to initialize price check service", () => {
+    // When
+    buildApp();
+
+    // Then
+    expect(mockApp.addHook).toHaveBeenCalledWith(
+      "onReady",
+      expect.any(Function),
+    );
+  });
+
+  it("should set up onClose hook for cleanup", () => {
+    // When
+    buildApp();
+
+    // Then
+    expect(mockApp.addHook).toHaveBeenCalledWith(
+      "onClose",
+      expect.any(Function),
+    );
   });
 
   // Test the health check endpoint handler
