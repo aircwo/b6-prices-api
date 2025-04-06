@@ -2,6 +2,7 @@ import { DataSource } from "typeorm";
 import { config } from "./index";
 import { Alert } from "../../feature/alert/model/entity/alert.entity";
 import { DEFAULT_ENVIRONMENT } from "../utils/constants";
+import { join } from "path";
 
 export const dataSource = new DataSource({
   type: "postgres",
@@ -13,7 +14,7 @@ export const dataSource = new DataSource({
   synchronize: config.nodeEnv === DEFAULT_ENVIRONMENT,
   logging: config.nodeEnv === DEFAULT_ENVIRONMENT,
   entities: [Alert],
-  migrations: ["../../infrastructure/database/migrations/**/*{.ts}"],
+  migrations: [join(__dirname, "../../infrastructure/database/migrations/createAlertTable.ts")],
 });
 
 export const initializeDataSource = async () => {
